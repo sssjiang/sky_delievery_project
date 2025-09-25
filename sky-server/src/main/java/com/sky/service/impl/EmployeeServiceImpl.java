@@ -16,6 +16,10 @@ import org.springframework.util.DigestUtils;
 import com.sky.dto.EmployeeDTO;
 import java.time.LocalDateTime;
 import com.sky.context.BaseContext;
+import com.sky.dto.EmployeePageQueryDTO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.sky.result.PageResult;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -73,5 +77,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.insert(employee);
 
+    }
+    public PageResult PageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
+        PageResult pageResult = new PageResult(page.getTotal(), page.getResult());
+        return pageResult;
     }
 }
