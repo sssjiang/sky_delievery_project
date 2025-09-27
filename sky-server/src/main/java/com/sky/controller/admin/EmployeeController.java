@@ -24,6 +24,8 @@ import com.sky.dto.EmployeePageQueryDTO;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 员工管理
@@ -96,5 +98,14 @@ public class EmployeeController {
         PageResult pageResult = employeeService.PageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用员工")
+    public Result<String> startOrStop(@PathVariable Integer status, Long id){
+        employeeService.startOrStop(status, id);
+        log.info("启用禁用员工：{} {}", status, id);
+        return Result.success();
+    }
+
 
 }
