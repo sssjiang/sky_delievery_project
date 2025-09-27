@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.sky.result.PageResult;
 import com.sky.dto.EmployeePageQueryDTO;
-
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 员工管理
@@ -101,11 +101,25 @@ public class EmployeeController {
 
     @PostMapping("/status/{status}")
     @ApiOperation("启用禁用员工")
-    public Result<String> startOrStop(@PathVariable Integer status, Long id){
+    public Result<String> startOrStop(@PathVariable Integer status,  @RequestParam Long id){
         employeeService.startOrStop(status, id);
         log.info("启用禁用员工：{} {}", status, id);
         return Result.success();
     }
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工")
+    public Result<Employee> getById(@PathVariable Long id){
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+    @PutMapping
+    @ApiOperation("修改员工")
+    public Result<String> update(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.update(employeeDTO);
+        return Result.success("修改员工成功");
+    }
+
+
 
 
 }
