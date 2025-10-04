@@ -19,6 +19,8 @@ import com.sky.result.Result;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
+import com.sky.vo.DishVO;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -50,5 +52,14 @@ public class DishController {
         dishService.deleteBatch(ids);
         return Result.success();
     }
-    
+    // 用DishVO而不用Dish 因为要返回口味信息
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询菜品")
+    public Result<DishVO> getById(@PathVariable Long id){
+        log.info("根据id查询菜品:{}", id);
+        DishVO dishVO = dishService.getByIdWithFlavor(id);
+        return Result.success(dishVO);
+    }
+   
+
 }
