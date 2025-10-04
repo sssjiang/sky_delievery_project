@@ -16,6 +16,9 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.sky.result.Result;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 
 @RestController
@@ -38,6 +41,14 @@ public class DishController {
         log.info("菜品分页查询:{}", dishPageQueryDTO);
         PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);
         return Result.success(pageResult);
+    }
+    @DeleteMapping
+    @ApiOperation("菜品批量删除")
+    // 这个注解可以接收"1,2,3"这样的字符串，转换成List<Long>
+    public Result delete(@RequestParam List<Long> ids){
+        log.info("批量删除菜品:{}", ids);
+        dishService.deleteBatch(ids);
+        return Result.success();
     }
     
 }

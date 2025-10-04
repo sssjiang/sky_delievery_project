@@ -12,11 +12,15 @@ import com.sky.entity.Dish;
 import org.springframework.beans.BeanUtils;
 import java.util.List;
 import com.sky.entity.DishFlavor;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.vo.DishVO;
+import com.sky.constant.StatusConstant;
+import com.sky.constant.MessageConstant;
+import com.sky.mapper.SetmealDishMapper;
 @Service
 @Slf4j
 public class DishServiceImpl implements DishService {
@@ -24,6 +28,8 @@ public class DishServiceImpl implements DishService {
     private DishMapper dishMapper;
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
     @Transactional
     public void saveWithFlavor(DishDTO dishDTO) {
       //1.向菜品表插入一条数据
@@ -45,5 +51,30 @@ public class DishServiceImpl implements DishService {
       PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
       Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
       return new PageResult(page.getTotal(), page.getResult());
+    }
+    // 事物注解，保持原子性
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+      //1.判断当前的菜品是否可以删除---是否存在起售中的菜品？
+      ids.forEach(id -> {
+        Dish dish = dishMapper.getById(id);
+        if (dish.getStatus() == StatusConstant.ENABLE) {
+          throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+        }
+      });
+
+      //2.判断当前的菜品是否被套餐关联
+      List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
+      if (setmealIds != null && setmealIds.size() > 0) {
+        throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+      }
+      //3.删除菜品表中的菜品
+      for (Long id : ids) {
+        dishMapper.deleteById(id);
+         //删除菜品关联的口味数据
+        dishFlavorMapper.deleteByDishId(id);
+      }
+     
+
     }
 }
