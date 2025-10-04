@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Select;
 import com.sky.annotation.AutoFill;
 import com.sky.enumeration.OperationType;
 import com.sky.entity.Dish;
+import com.sky.dto.DishPageQueryDTO;
+import com.sky.vo.DishVO;
+import com.github.pagehelper.Page;
+
 @Mapper
 public interface DishMapper {
 
@@ -18,4 +22,5 @@ public interface DishMapper {
     Integer countByCategoryId(Long categoryId);
     @AutoFill(OperationType.INSERT)
     void insert(Dish dish);
+    Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 }

@@ -12,6 +12,11 @@ import com.sky.entity.Dish;
 import org.springframework.beans.BeanUtils;
 import java.util.List;
 import com.sky.entity.DishFlavor;
+import com.sky.dto.DishPageQueryDTO;
+import com.sky.result.PageResult;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.sky.vo.DishVO;
 @Service
 @Slf4j
 public class DishServiceImpl implements DishService {
@@ -35,5 +40,10 @@ public class DishServiceImpl implements DishService {
         });
         dishFlavorMapper.insertBatch(dishFlavors);
       }
+    }
+    public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
+      PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
+      Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
+      return new PageResult(page.getTotal(), page.getResult());
     }
 }
