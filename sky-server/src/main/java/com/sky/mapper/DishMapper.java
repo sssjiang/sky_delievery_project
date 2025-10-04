@@ -10,6 +10,7 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.vo.DishVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Delete;
+import java.util.List;
 
 @Mapper
 public interface DishMapper {
@@ -29,4 +30,6 @@ public interface DishMapper {
     // 根据主键id删除菜品
     @Delete("delete from dish where id = #{id}")
     void deleteById(Long id);
+    // 根据菜品ids批量删除菜品
+    void deleteByIds(List<Long> ids);
 }
