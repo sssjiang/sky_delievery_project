@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import com.sky.result.Result;
 import com.sky.dto.DishDTO;
+import com.sky.entity.Dish;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,6 @@ import com.sky.service.DishService;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.sky.result.Result;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
@@ -67,6 +67,13 @@ public class DishController {
         dishService.updateWithFlavor(dishDTO);
         return Result.success();
     }
-   
+    
+    @GetMapping("/list")
+    @ApiOperation("根据分类id查询菜品")
+    public Result<List<Dish>> getByCategoryId(@RequestParam Long categoryId){
+        log.info("根据分类id查询菜品:{}", categoryId);
+        List<Dish> dishes = dishService.getByCategoryId(categoryId);
+        return Result.success(dishes);
+    }
 
 }
