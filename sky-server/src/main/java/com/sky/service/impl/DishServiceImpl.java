@@ -21,6 +21,8 @@ import com.sky.vo.DishVO;
 import com.sky.constant.StatusConstant;
 import com.sky.constant.MessageConstant;
 import com.sky.mapper.SetmealDishMapper;
+import java.util.Arrays;
+
 @Service
 @Slf4j
 public class DishServiceImpl implements DishService {
@@ -121,8 +123,31 @@ public class DishServiceImpl implements DishService {
      * 根据分类id查询菜品
      * @param categoryId
      * @return
-     */
-    public List<Dish> getByCategoryId(Long categoryId) {
-        return dishMapper.getByCategoryId(categoryId);
+*/
+public List<Dish> list(Long categoryId) {
+  Dish dish = Dish.builder()
+      .categoryId(categoryId)
+      .status(StatusConstant.ENABLE)
+      .build();
+  return dishMapper.list(dish);
+}
+
+/**
+ * 启停售菜品
+ * @param id
+ * @param status
+ */
+@Transactional
+public void updateStatusById(Long id, Integer status) {
+    // 如果是停售操作，需要检查菜品是否被套餐关联,关联套餐如果是启售状态，则提示"套餐内包含启售菜品，无法停售"
+    if (status == StatusConstant.DISABLE) {
+      List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(Arrays.asList(id));
+      if (setmealIds != null && setmealIds.size() > 0) {
+        throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+      }
     }
+    
+    // 更新菜品状态
+    dishMapper.updateStatusById(id, status);
+}
 }
