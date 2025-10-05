@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.sky.result.PageResult;
 import com.sky.dto.SetmealPageQueryDTO;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import com.sky.vo.SetmealVO;
+import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("/admin/setmeal")
 @Api(tags = "套餐管理")
@@ -37,5 +40,21 @@ public class SetmealController {
         log.info("分页查询:{}", setmealPageQueryDTO);
         PageResult pageResult = setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(pageResult);
+    }
+    //根据id查询套餐
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询套餐")
+    public Result<SetmealVO> getById(@PathVariable Long id){
+        log.info("根据id查询套餐:{}", id);
+        SetmealVO setmealVO = setmealService.getById(id);
+        return Result.success(setmealVO);
+    }
+    //修改套餐
+    @PutMapping
+    @ApiOperation("修改套餐")
+    public Result<String> update(@RequestBody SetmealDTO setmealDTO){
+        log.info("修改套餐:{}", setmealDTO);
+        setmealService.update(setmealDTO);
+        return Result.success();
     }
 }
