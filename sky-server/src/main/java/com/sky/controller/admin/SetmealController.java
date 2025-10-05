@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.sky.vo.SetmealVO;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import java.util.List;
 @RestController
 @RequestMapping("/admin/setmeal")
 @Api(tags = "套餐管理")
@@ -55,6 +57,15 @@ public class SetmealController {
     public Result<String> update(@RequestBody SetmealDTO setmealDTO){
         log.info("修改套餐:{}", setmealDTO);
         setmealService.update(setmealDTO);
+        return Result.success();
+    }
+    
+    //批量删除套餐
+    @DeleteMapping
+    @ApiOperation("批量删除套餐")
+    public Result<String> delete(@RequestParam List<Long> ids){
+        log.info("批量删除套餐:{}", ids);
+        setmealService.deleteBatch(ids);
         return Result.success();
     }
 }

@@ -8,6 +8,7 @@ import com.sky.entity.Setmeal;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.github.pagehelper.Page;
 import com.sky.vo.SetmealVO;
+import java.util.List;
 @Mapper
 public interface SetmealMapper {
 
@@ -43,4 +44,11 @@ public interface SetmealMapper {
      */
     @AutoFill(OperationType.UPDATE)
     void update(Setmeal setmeal);
+    
+    
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }

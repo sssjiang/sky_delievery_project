@@ -7,7 +7,6 @@ import com.sky.dto.SetmealDTO;
 import lombok.extern.slf4j.Slf4j;
 import com.sky.service.SetmealService;
 import com.sky.mapper.SetmealDishMapper;
-import com.sky.mapper.DishMapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.BeanUtils;
 import com.sky.entity.Setmeal;
@@ -18,6 +17,9 @@ import com.sky.result.PageResult;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.vo.SetmealVO;
+import com.sky.constant.StatusConstant;
+import com.sky.constant.MessageConstant;
+import com.sky.exception.DeletionNotAllowedException;
 
 @Service
 @Slf4j
@@ -26,8 +28,6 @@ public class SetmealServiceImpl implements SetmealService {
     private SetmealMapper setmealMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
-    @Autowired
-    private DishMapper dishMapper;
 
     @Transactional
     public void saveWithDish(SetmealDTO setmealDTO) {
@@ -86,5 +86,25 @@ public class SetmealServiceImpl implements SetmealService {
         setmealDishMapper.insertBatch(setmealDishes);
     }
 
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+        //1.判断当前的套餐是否可以删除---是否存在起售中的套餐？
+        ids.forEach(id -> {
+            Setmeal setmeal = setmealMapper.getById(id);
+            if(StatusConstant.ENABLE == setmeal.getStatus()){
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
+        });
+
+        //2.删除套餐表中的套餐
+        setmealMapper.deleteByIds(ids);
+        
+        //3.删除套餐和菜品的关联关系
+        setmealDishMapper.deleteBySetmealIds(ids);
+    }
 
 }
