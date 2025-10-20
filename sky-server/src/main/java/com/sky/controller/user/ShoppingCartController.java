@@ -15,6 +15,8 @@ import com.sky.service.ShoppingCartService;
 import java.util.List;
 import com.sky.entity.ShoppingCart;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 @RestController
 @RequestMapping("/user/shoppingCart")
 @Slf4j
@@ -36,6 +38,12 @@ public class ShoppingCartController {
     public Result<List<ShoppingCart>> list(){
         List<ShoppingCart> list = shoppingCartService.showShoppingCart();
         return Result.success(list);
+    }
+    @DeleteMapping("/clean")
+    @ApiOperation("清空购物车")
+    public Result<String> clean(){
+        shoppingCartService.cleanShoppingCart();
+        return Result.success();
     }
 
 }
