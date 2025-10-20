@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.sky.service.ShoppingCartService;
+import java.util.List;
+import com.sky.entity.ShoppingCart;
+import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequestMapping("/user/shoppingCart")
 @Slf4j
@@ -27,5 +30,12 @@ public class ShoppingCartController {
         return Result.success();
 
     }
-    
+
+    @GetMapping("/list")
+    @ApiOperation("查看购物车")
+    public Result<List<ShoppingCart>> list(){
+        List<ShoppingCart> list = shoppingCartService.showShoppingCart();
+        return Result.success(list);
+    }
+
 }

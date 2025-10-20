@@ -63,6 +63,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         //如果不存在，则新增商品
+
       
     }
+    public List<ShoppingCart> showShoppingCart() {
+        Long userId = BaseContext.getCurrentId();
+        ShoppingCart shoppingCart =ShoppingCart.builder()
+        .userId(userId)
+        .build();
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        return list;
+    }   
 }
